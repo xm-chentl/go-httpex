@@ -7,9 +7,9 @@ import (
 )
 
 // New 实例一个mock实例
-func New(callback func(url string, requestData interface{}) (interface{}, error)) httpex.IHttp {
+func New(callback func(method, url string, requestData interface{}) (interface{}, error)) httpex.IHttp {
 	return &httpex.BaseHTTP{
-		HandleFunc: func(url string, requestData, responseData interface{}) error {
+		HandleFunc: func(method, url string, requestData, responseData interface{}) error {
 			respData, err := callback(url, requestData)
 			if err != nil {
 				return err

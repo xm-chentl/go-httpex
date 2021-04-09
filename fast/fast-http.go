@@ -5,20 +5,20 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/xm-chentl/go-httpex"
 	"github.com/valyala/fasthttp"
+	"github.com/xm-chentl/go-httpex"
 )
 
 // New 新建一个http实例
 func New() httpex.IHttp {
 	return &httpex.BaseHTTP{
-		HandleFunc: func(url string, requestData, responseData interface{}) error {
+		HandleFunc: func(method, url string, requestData, responseData interface{}) error {
 			var err error
 			req := fasthttp.AcquireRequest()
 			defer fasthttp.ReleaseRequest(req)
 
 			req.Header.SetContentType(httpex.ContentType)
-			req.Header.SetMethod(http.MethodPost)
+			req.Header.SetMethod(method)
 			req.SetRequestURI(url)
 			requestDataOfByte, err := json.Marshal(requestData)
 			if err != nil {

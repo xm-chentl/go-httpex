@@ -14,14 +14,14 @@ import (
 // New 实例
 func New() httpex.IHttp {
 	return &httpex.BaseHTTP{
-		HandleFunc: func(url string, requestData, responseData interface{}) error {
+		HandleFunc: func(method, url string, requestData, responseData interface{}) error {
 			var err error
 			bodyBytes, err := json.Marshal(requestData)
 			if err != nil {
 				return fmt.Errorf("requestData to byte[] is fail, err(%v)", err)
 			}
 
-			req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(bodyBytes))
+			req, err := http.NewRequest(method, url, bytes.NewBuffer(bodyBytes))
 			if err != nil {
 				return err
 			}

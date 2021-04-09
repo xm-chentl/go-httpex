@@ -2,6 +2,7 @@ package httpex
 
 import (
 	"fmt"
+	"net/http"
 	"reflect"
 )
 
@@ -11,6 +12,7 @@ type HandleFunc func(url string, requestData, responseData interface{}) error
 // BaseHTTP 基础请求类
 type BaseHTTP struct {
 	url         string
+	method      string
 	requestData interface{}
 	HandleFunc  HandleFunc
 }
@@ -27,14 +29,24 @@ func (b *BaseHTTP) SetBody(requestData interface{}) IHttp {
 	return b
 }
 
+// SetMethod 设置请求方式
+func (b *BaseHTTP) SetMethod(method string) IHttp {
+	b.method = method
+	return b
+}
+
 // Send 发送请求
 func (b *BaseHTTP) Send(responseData interface{}) error {
 	defer b.Reset()
 	if reflect.TypeOf(responseData).Kind() != reflect.Ptr {
 		return fmt.Errorf("receive parameter responseData must ptr")
 	}
+	if b.method == "" {
+		// 默认post
+		b.method = http.MethodPost
+	}
 
-	return b.HandleFunc(b.url, b.requestData, responseData)
+	return b.HandleFunc(b.method, b.url, b.requestData, responseData)
 }
 
 // Reset 重置参数

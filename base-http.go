@@ -7,7 +7,7 @@ import (
 )
 
 // HandleFunc 处理函数
-type HandleFunc func(url string, requestData, responseData interface{}) error
+type HandleFunc func(method, url string, requestData, responseData interface{}) error
 
 // BaseHTTP 基础请求类
 type BaseHTTP struct {

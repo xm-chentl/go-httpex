@@ -7,13 +7,14 @@ import (
 )
 
 // HandleFunc 处理函数
-type HandleFunc func(method, url string, requestData, responseData interface{}) error
+type HandleFunc func(method, url string, requestData, responseData interface{}, headers map[string]string) error
 
 // BaseHTTP 基础请求类
 type BaseHTTP struct {
 	url         string
 	method      string
 	requestData interface{}
+	header      map[string]string
 	HandleFunc  HandleFunc
 }
 
@@ -26,6 +27,12 @@ func (b *BaseHTTP) SetURL(url string) IHttp {
 // SetBody 设置请求的参数
 func (b *BaseHTTP) SetBody(requestData interface{}) IHttp {
 	b.requestData = requestData
+	return b
+}
+
+// SetHeader 设置表头
+func (b *BaseHTTP) SetHeader(headers map[string]string) IHttp {
+	b.header = headers
 	return b
 }
 
@@ -46,7 +53,7 @@ func (b *BaseHTTP) Send(responseData interface{}) error {
 		b.method = http.MethodPost
 	}
 
-	return b.HandleFunc(b.method, b.url, b.requestData, responseData)
+	return b.HandleFunc(b.method, b.url, b.requestData, responseData, b.header)
 }
 
 // Reset 重置参数

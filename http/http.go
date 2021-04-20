@@ -14,7 +14,7 @@ import (
 // New 实例
 func New() httpex.IHttp {
 	return &httpex.BaseHTTP{
-		HandleFunc: func(method, url string, requestData, responseData interface{}) error {
+		HandleFunc: func(method, url string, requestData, responseData interface{}, headers map[string]string) error {
 			var err error
 			bodyBytes, err := json.Marshal(requestData)
 			if err != nil {
@@ -27,6 +27,10 @@ func New() httpex.IHttp {
 			}
 
 			req.Header.Add("content-type", httpex.ContentType)
+			for k, v := range headers {
+				req.Header.Add(k, v)
+			}
+
 			client := &http.Client{Timeout: 5 * time.Second}
 			resp, err := client.Do(req)
 			if err != nil {

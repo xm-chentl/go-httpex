@@ -12,7 +12,7 @@ import (
 // New 新建一个http实例
 func New() httpex.IHttp {
 	return &httpex.BaseHTTP{
-		HandleFunc: func(method, url string, requestData, responseData interface{}) error {
+		HandleFunc: func(method, url string, requestData, responseData interface{}, headers map[string]string) error {
 			var err error
 			req := fasthttp.AcquireRequest()
 			defer fasthttp.ReleaseRequest(req)
@@ -23,6 +23,12 @@ func New() httpex.IHttp {
 			requestDataOfByte, err := json.Marshal(requestData)
 			if err != nil {
 				return fmt.Errorf("fasthttp requestData to []byte fail err: %v", err)
+			}
+			if headers != nil {
+				for k, v := range headers {
+					req.Header.Add(k, v)
+				}
+
 			}
 			req.SetBody(requestDataOfByte)
 

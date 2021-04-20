@@ -7,17 +7,21 @@ import (
 )
 
 // New 实例一个mock实例
-func New(callback func(method, url string, requestData interface{}) (interface{}, error)) httpex.IHttp {
+func New(callback func(method, url string, requestData interface{}, header map[string]string) (interface{}, error)) httpex.IHttp {
 	return &httpex.BaseHTTP{
-		HandleFunc: func(method, url string, requestData, responseData interface{}) error {
-			respData, err := callback(url, requestData)
+		HandleFunc: func(method, url string, requestData, responseData interface{}, header map[string]string) error {
+			respData, err := callback(method, url, requestData, header)
 			if err != nil {
 				return err
 			}
 
 			// 序列化，使用mock者无需要关注
 			respDataByte, _ := json.Marshal(respData)
-			json.Unmarshal(respDataByte, responseData)
+			err = json.Unmarshal(respDataByte, responseData)
+			if err != nil {
+				return err
+			}
+
 			return nil
 		},
 	}
